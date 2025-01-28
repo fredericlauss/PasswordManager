@@ -11,10 +11,12 @@ namespace PasswordManager.Api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _configuration;
+        private readonly IPasswordService _passwordService;
         
-        public AuthController(IConfiguration configuration)
+        public AuthController(IConfiguration configuration, IPasswordService passwordService)
         {
             _configuration = configuration;
+            _passwordService = passwordService;
         }
 
         [HttpPost("register")]
@@ -29,6 +31,13 @@ namespace PasswordManager.Api.Controllers
         {
             // TODO: Vérification des credentials, génération du JWT token
             return Ok("Login successful");
+        }
+
+        [HttpPost("validate-password")]
+        public async Task<IActionResult> ValidatePassword([FromBody] string password)
+        {
+            var result = await _passwordService.ValidatePassword(password);
+            return Ok(result);
         }
     }
 } 

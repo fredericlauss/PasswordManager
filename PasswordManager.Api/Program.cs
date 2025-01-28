@@ -1,3 +1,6 @@
+using PasswordManager.Core;
+using PasswordManager.Core.Data;
+using PasswordManager.Core.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -19,6 +22,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = false
         };
     });
+
+// Enregistrement des services de PasswordManager.Core
+builder.Services.AddScoped<IPasswordService, PasswordService>();
 
 var app = builder.Build();
 
