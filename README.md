@@ -1,18 +1,107 @@
 # Password Manager Project
 
 ## Auteurs
-- Frédéric LAUSSON
+- Frï¿½dï¿½ric LAUSSON
 
-## Fonctionnalités réalisées
+## Fonctionnalitï¿½s rï¿½alisï¿½es
 
    Authentification : Inscription, connexion.
    Gestion des mots de passe : Ajouter, modifier et supprimer des mots de passe.
-   Catégorisation : Organiser les mots de passe par catégorie.
+   Catï¿½gorisation : Organiser les mots de passe par catï¿½gorie.
    Recherche rapide : Trouver facilement des mots de passe via une barre de recherche.
-   Chiffrement : Sécuriser les données avec des algorithmes de chiffrement robustes.
-   Mode hors ligne : Accès local sécurisé sans dépendance réseau.
-   Sécurité : Utilisation d’un mot de passe principal pour la décryptage, verrouillage après tentatives échouées.
-   Générateur de mots de passe : Génération de mots de passe complexes et sécurisés avec critères personnalisables.
-   Sauvegarde : sur une base de données SQLite.
+   Chiffrement : Sï¿½curiser les donnï¿½es avec des algorithmes de chiffrement robustes.
+   Mode hors ligne : Accï¿½s local sï¿½curisï¿½ sans dï¿½pendance rï¿½seau.
+   Sï¿½curitï¿½ : Utilisation dï¿½un mot de passe principal pour la dï¿½cryptage, verrouillage aprï¿½s tentatives ï¿½chouï¿½es.
+   Gï¿½nï¿½rateur de mots de passe : Gï¿½nï¿½ration de mots de passe complexes et sï¿½curisï¿½s avec critï¿½res personnalisables.
+   Sauvegarde : sur une base de donnï¿½es SQLite.
    Interface utilisateur : Simple, intuitive, et responsive avec recherche et filtrage des mots de passe.
    Points bonus: Tests unitaires, et Application mobile
+
+   # Password Manager API
+
+Une API sÃ©curisÃ©e pour la gestion de mots de passe, dÃ©veloppÃ©e avec ASP.NET Core.
+
+## ðŸš€ FonctionnalitÃ©s prÃ©vues
+
+### 1. Configuration et SÃ©curitÃ©
+- [ ] Classe AppSettings pour centraliser la configuration
+- [ ] Validation du JWT token
+- [ ] Hachage des mots de passe (bcrypt/argon2)
+- [ ] Rate limiting pour prÃ©venir les attaques
+- [ ] Logs structurÃ©s (Serilog)
+
+### 2. Controllers et Endpoints
+#### AuthController
+- [ ] Login endpoint
+- [ ] Register endpoint
+- [ ] Refresh token endpoint
+- [ ] Change password endpoint
+
+#### PasswordController
+- [ ] CRUD operations
+- [ ] Partage de mots de passe
+- [ ] Recherche/filtrage
+- [ ] Export sÃ©curisÃ©
+
+#### UserController
+- [ ] Gestion du profil utilisateur
+- [ ] PrÃ©fÃ©rences utilisateur
+
+### 3. Services
+#### AuthService
+- [ ] GÃ©nÃ©ration de JWT tokens
+- [ ] Validation des credentials
+- [ ] Gestion des refresh tokens
+
+#### PasswordService
+- [ ] Logique de chiffrement/dÃ©chiffrement
+- [ ] Validation des mots de passe
+- [ ] GÃ©nÃ©ration de mots de passe sÃ©curisÃ©s
+
+#### UserService
+- [ ] Gestion des utilisateurs
+- [ ] Validation des donnÃ©es
+
+### 4. Models
+#### DTOs
+- [ ] LoginDto
+- [ ] RegisterDto
+- [ ] PasswordDto
+- [ ] UserDto
+- [ ] TokenDto
+
+#### Entities
+- [ ] User
+- [ ] Password
+- [ ] RefreshToken
+- [ ] AuditLog
+
+### 5. Base de donnÃ©es
+- [ ] Configuration Entity Framework Core
+- [ ] Migrations
+- [ ] Repositories
+- [ ] Relations entre entitÃ©s
+- [ ] Index pour les performances
+
+### 6. Validation et Erreurs
+- [ ] FluentValidation
+- [ ] Middleware de gestion d'erreurs global
+- [ ] Codes d'erreur personnalisÃ©s
+- [ ] Validation des modÃ¨les
+
+### 7. Tests
+#### Tests unitaires
+- [ ] Services
+- [ ] Controllers
+- [ ] Validation
+
+#### Tests d'intÃ©gration
+- [ ] Flow d'authentification
+- [ ] CRUD des mots de passe
+- [ ] ScÃ©narios de partage
+
+### 8. Documentation
+- [ ] Swagger avec exemples
+- [ ] Documentation des endpoints
+- [ ] Description des DTOs
+- [ ] Documentation des codes
