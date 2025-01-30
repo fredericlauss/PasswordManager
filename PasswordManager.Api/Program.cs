@@ -26,6 +26,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // Enregistrement des services de PasswordManager.Core
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 
+// Configuration du port avant la construction de l'application
+builder.WebHost.UseUrls("http://localhost:5001");
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -34,9 +37,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-// Ajout de la configuration du port
-app.Urls.Add("http://localhost:5001");  // Utilisation du port 5001 au lieu de 5000
 
 app.UseHttpsRedirection();
 app.UseCors("AllowBlazorOrigin");
