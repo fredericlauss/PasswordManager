@@ -12,4 +12,4 @@ namespace PasswordManager.Core.Data
 
         public DbSet<User> Users { get; set; }
     }
-} 
+}
