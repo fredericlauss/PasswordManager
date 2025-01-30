@@ -35,6 +35,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Ajout de la configuration du port
+app.Urls.Add("http://localhost:5001");  // Utilisation du port 5001 au lieu de 5000
+
 app.UseHttpsRedirection();
 app.UseCors("AllowBlazorOrigin");
 app.UseAuthentication();
