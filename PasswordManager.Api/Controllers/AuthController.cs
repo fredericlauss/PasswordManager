@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using PasswordManager.Core.Data;
 using PasswordManager.Core.Models;
 using PasswordManager.Core.Services;
+using BCrypt.Net;
 
 namespace PasswordManager.Api.Controllers
 {
@@ -12,24 +15,50 @@ namespace PasswordManager.Api.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly IPasswordService _passwordService;
+        private readonly ApplicationDbContext _context;
         
-        public AuthController(IConfiguration configuration, IPasswordService passwordService)
+        public AuthController(IConfiguration configuration, IPasswordService passwordService, ApplicationDbContext context)
         {
             _configuration = configuration;
             _passwordService = passwordService;
+            _context = context;
         }
 
         [HttpPost("register")]
         public async Task<ActionResult<User>> Register(RegisterRequest request)
         {
-            // TODO: Validation, hachage du mot de passe, sauvegarde en base de données
-            return Ok("User registered successfully");
+            var userExists = await _context.Users.AnyAsync(u => u.Email == request.Email);
+            if (userExists)
+            {
+                return BadRequest("User already exists");
+            }
+
+            var user = new User
+            {
+                Email = request.Email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password)
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(user);
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<string>> Login(LoginRequest request)
         {
-            // TODO: Vérification des credentials, génération du JWT token
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+            if (user == null)
+            {
+                return BadRequest("User not found");
+            }
+
+            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+            {
+                return BadRequest("Wrong password");
+            }
+
             return Ok("Login successful");
         }
 
