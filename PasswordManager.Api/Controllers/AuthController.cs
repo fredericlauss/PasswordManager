@@ -102,5 +102,38 @@ namespace PasswordManager.Api.Controllers
             var result = await _passwordService.ValidatePassword(password);
             return Ok(result);
         }
+
+        [HttpGet("me")]
+        [Authorize]
+        public async Task<ActionResult<object>> GetCurrentUser()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+
+            if (userId == null)
+                return Unauthorized();
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id.ToString() == userId);
+            if (user == null)
+                return NotFound("User not found");
+
+            return Ok(new
+            {
+                Id = user.Id,
+                Email = user.Email,
+            });
+        }
+
+        [HttpGet("verify-token")]
+        [Authorize]
+        public ActionResult VerifyToken()
+        {
+            return Ok(new
+            {
+                IsValid = true,
+                UserEmail = User.FindFirst(ClaimTypes.Email)?.Value,
+                UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+            });
+        }
     }
 } 
