@@ -46,7 +46,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// Commentez ou supprimez cette ligne
+// app.UseHttpsRedirection();
+
 app.UseCors("AllowBlazorOrigin");
 app.UseAuthentication();
 app.UseAuthorization();
