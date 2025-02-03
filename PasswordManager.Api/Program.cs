@@ -32,6 +32,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 // Enregistrement des services de PasswordManager.Core
 builder.Services.AddScoped<IPasswordService, PasswordService>();
+builder.Services.AddScoped<IEncryptionService, EncryptionService>();
 
 // Configuration du port avant la construction de l'application
 builder.WebHost.UseUrls("http://localhost:5001");
