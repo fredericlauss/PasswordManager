@@ -17,12 +17,14 @@ namespace PasswordManager.Core.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configuration de la relation User - StoredPassword
-            modelBuilder.Entity<StoredPassword>()
-                .HasOne(p => p.User)
-                .WithMany()
-                .HasForeignKey(p => p.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<StoredPassword>(entity =>
+            {
+                entity.HasOne(p => p.User)
+                    .WithMany()
+                    .HasForeignKey(p => p.UserId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+            });
         }
     }
 }

@@ -33,7 +33,11 @@ namespace PasswordManager.Api.Controllers
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null) return Unauthorized();
 
-            var query = _context.StoredPasswords.Where(p => p.UserId.ToString() == userId);
+            Console.WriteLine($"Searching passwords for user: {userId}");
+
+            var query = _context.StoredPasswords
+                .AsNoTracking()
+                .Where(p => p.UserId == Guid.Parse(userId));
             
             if (!string.IsNullOrEmpty(category))
             {
@@ -41,6 +45,9 @@ namespace PasswordManager.Api.Controllers
             }
 
             var passwords = await query.ToListAsync();
+            
+            Console.WriteLine($"Found {passwords.Count} passwords");
+            
             return Ok(passwords);
         }
 
@@ -64,6 +71,12 @@ namespace PasswordManager.Api.Controllers
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null) return Unauthorized();
 
+            var user = await _context.Users.FindAsync(Guid.Parse(userId));
+            if (user == null)
+            {
+                return BadRequest("User not found");
+            }
+
             var encryptedPassword = _encryptionService.Encrypt(
                 request.Password,
                 _configuration["AppSettings:EncryptionKey"]!
@@ -77,7 +90,7 @@ namespace PasswordManager.Api.Controllers
                 Website = request.Website,
                 Notes = request.Notes,
                 Category = request.Category,
-                UserId = Guid.Parse(userId)
+                UserId = user.Id
             };
 
             _context.StoredPasswords.Add(storedPassword);
@@ -92,10 +105,21 @@ namespace PasswordManager.Api.Controllers
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null) return Unauthorized();
 
-            var password = await _context.StoredPasswords
-                .FirstOrDefaultAsync(p => p.Id == id && p.UserId.ToString() == userId);
+            Console.WriteLine($"Looking for password {id} for user {userId}");
 
-            if (password == null) return NotFound();
+            var password = await _context.StoredPasswords
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.Id == id && p.UserId == Guid.Parse(userId));
+
+            if (password == null)
+            {
+                var exists = await _context.StoredPasswords.AnyAsync(p => p.Id == id);
+                if (exists)
+                {
+                    return Forbid();
+                }
+                return NotFound();
+            }
 
             return Ok(password);
         }
