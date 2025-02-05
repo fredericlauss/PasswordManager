@@ -1,42 +1,69 @@
 @page "/register"
-@inject IAuthService AuthService
+@rendermode InteractiveWebAssembly
+ 
 @inject NavigationManager NavigationManager
 
 <h3>Register</h3>
 
-<EditForm Model="@registerRequest" OnValidSubmit="HandleRegistration">
+<EditForm Model="@registerRequest" OnValidSubmit="HandleRegistration" FormName="register_form">
     <DataAnnotationsValidator />
+    <ValidationSummary />
+
     
-    <div class="form-group">
+    <div class="form-group mb-3">
         <label for="email">Email</label>
         <InputText id="email" @bind-Value="registerRequest.Email" class="form-control" />
-        <ValidationMessage For="@(() => registerRequest.Email)" />
+        <ValidationMessage For="@(() => registerRequest.Email)" class="text-danger" />
     </div>
     
-    <div class="form-group">
+    <div class="form-group mb-3">
         <label for="password">Password</label>
         <InputText type="password" id="password" @bind-Value="registerRequest.Password" class="form-control" />
-        <ValidationMessage For="@(() => registerRequest.Password)" />
+        <ValidationMessage For="@(() => registerRequest.Password)" class="text-danger" />
     </div>
     
-    <div class="form-group">
+    <div class="form-group mb-3">
         <label for="confirmPassword">Confirm Password</label>
         <InputText type="password" id="confirmPassword" @bind-Value="registerRequest.ConfirmPassword" class="form-control" />
-        <ValidationMessage For="@(() => registerRequest.ConfirmPassword)" />
+        <ValidationMessage For="@(() => registerRequest.ConfirmPassword)" class="text-danger" />
     </div>
     
     <button type="submit" class="btn btn-primary">Register</button>
 </EditForm>
 
+<div class="mt-3">
+    <h4>Form State:</h4>
+    <p>Email: @registerRequest.Email</p>
+    <p>Password: @(string.IsNullOrEmpty(registerRequest.Password) ? "Empty" : "Set")</p>
+    <p>Confirm Password: @(string.IsNullOrEmpty(registerRequest.ConfirmPassword) ? "Empty" : "Set")</p>
+</div>
+
 @code {
-    private RegisterRequest registerRequest = new();
+    private RegisterRequest registerRequest { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+        Console.WriteLine("Register component initialized");
+    }
 
     private async Task HandleRegistration()
     {
-        var result = await AuthService.Register(registerRequest);
-        if (result)
+        Console.WriteLine($"HandleRegistration called with Email: {registerRequest.Email}");
+        
+        if (string.IsNullOrEmpty(registerRequest.Email) || 
+            string.IsNullOrEmpty(registerRequest.Password) || 
+            string.IsNullOrEmpty(registerRequest.ConfirmPassword))
         {
-            NavigationManager.NavigateTo("/login");
+            Console.WriteLine("One or more fields are empty");
+            return;
         }
+
+        // var result = await AuthService.Register(registerRequest);
+        // Console.WriteLine($"Registration result: {result}");
+        
+        // if (result)
+        // {
+        //     NavigationManager.NavigateTo("/login");
+        // }
     }
-} 
+}

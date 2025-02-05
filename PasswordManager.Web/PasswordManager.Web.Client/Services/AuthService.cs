@@ -18,11 +18,27 @@ namespace PasswordManager.Web.Client.Services
             return response.IsSuccessStatusCode;
         }
 
-        public async Task<bool> Register(RegisterRequest request)
+public async Task<bool> Register(RegisterRequest request)
+    {
+        try
         {
             var response = await _http.PostAsJsonAsync("api/auth/register", request);
+            Console.WriteLine($"Register response: {response.StatusCode}");
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Register error: {error}");
+            }
+            
             return response.IsSuccessStatusCode;
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Register exception: {ex}");
+            throw;
+        }
+    }
 
         public async Task Logout()
         {

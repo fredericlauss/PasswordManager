@@ -5,7 +5,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+    .AddInteractiveServerComponents()
+    .AddInteractiveWebAssemblyComponents();
 
 // Add services
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -27,6 +28,8 @@ app.UseStaticFiles();
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
-    .AddAdditionalAssemblies(typeof(PasswordManager.Web.Client.Pages.Counter).Assembly);
+    .AddInteractiveServerRenderMode()
+    .AddInteractiveWebAssemblyRenderMode()
+    .AddAdditionalAssemblies(typeof(PasswordManager.Web.Client._Imports).Assembly);
 
 app.Run();

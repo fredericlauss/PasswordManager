@@ -4,7 +4,7 @@
 
 <h3>Login</h3>
 
-<EditForm Model="@loginRequest" OnValidSubmit="HandleLogin">
+<EditForm Model="@loginRequest" OnValidSubmit="HandleLogin" FormName="login_form">
     <DataAnnotationsValidator />
     
     <div class="form-group">
@@ -33,4 +33,4 @@
             NavigationManager.NavigateTo("/");
         }
     }
-} 
+}
