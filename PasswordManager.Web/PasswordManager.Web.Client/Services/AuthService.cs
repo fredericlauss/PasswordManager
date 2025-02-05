@@ -14,7 +14,7 @@ namespace PasswordManager.Web.Client.Services
 
         public async Task<bool> Login(LoginRequest request)
         {
-            var response = await _http.PostAsJsonAsync("api/auth/login", request);
+            var response = await _http.PostAsJsonAsync("http://localhost:5001/api/Auth/login", request);
             return response.IsSuccessStatusCode;
         }
 

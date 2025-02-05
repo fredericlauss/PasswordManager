@@ -1,4 +1,5 @@
 @page "/login"
+@rendermode InteractiveWebAssembly
 @inject IAuthService AuthService
 @inject NavigationManager NavigationManager
 
@@ -6,17 +7,18 @@
 
 <EditForm Model="@loginRequest" OnValidSubmit="HandleLogin" FormName="login_form">
     <DataAnnotationsValidator />
+    <ValidationSummary />
     
-    <div class="form-group">
+    <div class="form-group mb-3">
         <label for="email">Email</label>
         <InputText id="email" @bind-Value="loginRequest.Email" class="form-control" />
-        <ValidationMessage For="@(() => loginRequest.Email)" />
+        <ValidationMessage For="@(() => loginRequest.Email)" class="text-danger" />
     </div>
     
-    <div class="form-group">
+    <div class="form-group mb-3">
         <label for="password">Password</label>
         <InputText type="password" id="password" @bind-Value="loginRequest.Password" class="form-control" />
-        <ValidationMessage For="@(() => loginRequest.Password)" />
+        <ValidationMessage For="@(() => loginRequest.Password)" class="text-danger" />
     </div>
     
     <button type="submit" class="btn btn-primary">Login</button>
@@ -25,9 +27,25 @@
 @code {
     private LoginRequest loginRequest = new();
 
+    protected override void OnInitialized()
+    {
+        Console.WriteLine("Login component initialized");
+    }
+
     private async Task HandleLogin()
     {
+        Console.WriteLine($"HandleLogin called with Email: {loginRequest.Email}");
+        
+        if (string.IsNullOrEmpty(loginRequest.Email) || 
+            string.IsNullOrEmpty(loginRequest.Password))
+        {
+            Console.WriteLine("Email or password is empty");
+            return;
+        }
+
         var result = await AuthService.Login(loginRequest);
+        Console.WriteLine($"Login result: {result}");
+        
         if (result)
         {
             NavigationManager.NavigateTo("/");
