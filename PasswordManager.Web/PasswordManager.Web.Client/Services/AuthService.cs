@@ -22,7 +22,7 @@ public async Task<bool> Register(RegisterRequest request)
     {
         try
         {
-            var response = await _http.PostAsJsonAsync("api/auth/register", request);
+            var response = await _http.PostAsJsonAsync("http://localhost:5001/api/Auth/register", request);
             Console.WriteLine($"Register response: {response.StatusCode}");
             
             if (!response.IsSuccessStatusCode)

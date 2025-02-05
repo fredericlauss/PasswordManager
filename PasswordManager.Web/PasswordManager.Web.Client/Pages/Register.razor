@@ -1,6 +1,6 @@
 @page "/register"
 @rendermode InteractiveWebAssembly
- 
+@inject IAuthService AuthService
 @inject NavigationManager NavigationManager
 
 <h3>Register</h3>
@@ -58,12 +58,12 @@
             return;
         }
 
-        // var result = await AuthService.Register(registerRequest);
-        // Console.WriteLine($"Registration result: {result}");
+        var result = await AuthService.Register(registerRequest);
+        Console.WriteLine($"Registration result: {result}");
         
-        // if (result)
-        // {
-        //     NavigationManager.NavigateTo("/login");
-        // }
+        if (result)
+        {
+            NavigationManager.NavigateTo("/login");
+        }
     }
 }

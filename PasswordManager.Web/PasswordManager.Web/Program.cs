@@ -1,5 +1,5 @@
-using PasswordManager.Web.Client.Services;
 using PasswordManager.Web.Components;
+using PasswordManager.Web.Client.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,10 +8,10 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 
-// Add services
+// Add these lines to register the services
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped(sp => new HttpClient 
-{ 
+builder.Services.AddScoped(sp => new HttpClient
+{
     BaseAddress = new Uri(builder.Configuration["ApiUrl"] ?? "https://localhost:5001") 
 });
 
