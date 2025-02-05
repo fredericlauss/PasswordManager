@@ -1,0 +1,42 @@
+@page "/register"
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+<h3>Register</h3>
+
+<EditForm Model="@registerRequest" OnValidSubmit="HandleRegistration">
+    <DataAnnotationsValidator />
+    
+    <div class="form-group">
+        <label for="email">Email</label>
+        <InputText id="email" @bind-Value="registerRequest.Email" class="form-control" />
+        <ValidationMessage For="@(() => registerRequest.Email)" />
+    </div>
+    
+    <div class="form-group">
+        <label for="password">Password</label>
+        <InputText type="password" id="password" @bind-Value="registerRequest.Password" class="form-control" />
+        <ValidationMessage For="@(() => registerRequest.Password)" />
+    </div>
+    
+    <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <InputText type="password" id="confirmPassword" @bind-Value="registerRequest.ConfirmPassword" class="form-control" />
+        <ValidationMessage For="@(() => registerRequest.ConfirmPassword)" />
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Register</button>
+</EditForm>
+
+@code {
+    private RegisterRequest registerRequest = new();
+
+    private async Task HandleRegistration()
+    {
+        var result = await AuthService.Register(registerRequest);
+        if (result)
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+    }
+} 
