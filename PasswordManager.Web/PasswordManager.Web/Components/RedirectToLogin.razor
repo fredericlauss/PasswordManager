@@ -1,0 +1,12 @@
+@inject NavigationManager Navigation
+@using Microsoft.AspNetCore.Components.Web
+
+@code {
+    [Parameter]
+    public string? ReturnUrl { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Navigation.NavigateTo($"/login?returnUrl={Uri.EscapeDataString(ReturnUrl ?? "")}", false);
+    }
+}

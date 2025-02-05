@@ -1,54 +1,61 @@
 @page "/login"
-@rendermode InteractiveWebAssembly
 @inject IAuthService AuthService
 @inject NavigationManager NavigationManager
+@rendermode InteractiveWebAssembly
 
-<h3>Login</h3>
+<PageTitle>Login</PageTitle>
 
-<EditForm Model="@loginRequest" OnValidSubmit="HandleLogin" FormName="login_form">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    
-    <div class="form-group mb-3">
-        <label for="email">Email</label>
-        <InputText id="email" @bind-Value="loginRequest.Email" class="form-control" />
-        <ValidationMessage For="@(() => loginRequest.Email)" class="text-danger" />
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h1>Login</h1>
+            <EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <InputText id="email" @bind-Value="loginModel.Email" class="form-control" />
+                    <ValidationMessage For="@(() => loginModel.Email)" />
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <InputText type="password" id="password" @bind-Value="loginModel.Password" class="form-control" />
+                    <ValidationMessage For="@(() => loginModel.Password)" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Login</button>
+            </EditForm>
+
+            @if (!string.IsNullOrEmpty(error))
+            {
+                <div class="alert alert-danger mt-3">
+                    @error
+                </div>
+            }
+        </div>
     </div>
-    
-    <div class="form-group mb-3">
-        <label for="password">Password</label>
-        <InputText type="password" id="password" @bind-Value="loginRequest.Password" class="form-control" />
-        <ValidationMessage For="@(() => loginRequest.Password)" class="text-danger" />
-    </div>
-    
-    <button type="submit" class="btn btn-primary">Login</button>
-</EditForm>
+</div>
 
 @code {
-    private LoginRequest loginRequest = new();
-
-    protected override void OnInitialized()
-    {
-        Console.WriteLine("Login component initialized");
-    }
+    private LoginRequest loginModel = new();
+    private string error = string.Empty;
+    [Parameter] [SupplyParameterFromQuery] public string? ReturnUrl { get; set; }
 
     private async Task HandleLogin()
     {
-        Console.WriteLine($"HandleLogin called with Email: {loginRequest.Email}");
-        
-        if (string.IsNullOrEmpty(loginRequest.Email) || 
-            string.IsNullOrEmpty(loginRequest.Password))
-        {
-            Console.WriteLine("Email or password is empty");
-            return;
-        }
-
-        var result = await AuthService.Login(loginRequest);
-        Console.WriteLine($"Login result: {result}");
+        error = string.Empty;
+        var result = await AuthService.Login(loginModel);
         
         if (result)
         {
-            NavigationManager.NavigateTo("/");
+            var returnUrl = string.IsNullOrEmpty(ReturnUrl) ? "/" : ReturnUrl;
+            NavigationManager.NavigateTo(returnUrl);
+        }
+        else
+        {
+            error = "Login failed. Please check your credentials.";
         }
     }
 }

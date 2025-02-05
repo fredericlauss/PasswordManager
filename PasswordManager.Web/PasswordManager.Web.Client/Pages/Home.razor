@@ -1,0 +1,15 @@
+@page "/"
+@rendermode InteractiveWebAssembly
+@using Microsoft.AspNetCore.Components.Authorization
+
+<PageTitle>PasswordManager</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <h1>PasswordManager</h1>
+        <p>Welcome to your PasswordManager, @context.User.Identity?.Name!</p>
+    </Authorized>
+    <NotAuthorized>
+        <p>Please log in to access the password manager.</p>
+    </NotAuthorized>
+</AuthorizeView>

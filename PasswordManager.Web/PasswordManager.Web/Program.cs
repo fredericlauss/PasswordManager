@@ -1,5 +1,8 @@
 using PasswordManager.Web.Components;
 using PasswordManager.Web.Client.Services;
+using Microsoft.AspNetCore.Components.Authorization;
+using PasswordManager.Web.Client.Models;
+using Blazored.LocalStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +13,9 @@ builder.Services.AddRazorComponents()
 
 // Add these lines to register the services
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+builder.Services.AddAuthorizationCore();
+builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddScoped(sp => new HttpClient
 {
     BaseAddress = new Uri(builder.Configuration["ApiUrl"] ?? "https://localhost:5001") 
