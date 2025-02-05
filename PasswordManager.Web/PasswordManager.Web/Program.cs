@@ -1,13 +1,11 @@
 using PasswordManager.Web.Client.Services;
-using PasswordManager.Web.Client.Pages;
 using PasswordManager.Web.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents()
-    .AddInteractiveWebAssemblyComponents();
+    .AddInteractiveServerComponents();
 
 // Add services
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -18,7 +16,6 @@ builder.Services.AddScoped(sp => new HttpClient
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
@@ -26,10 +23,10 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
 app.UseAntiforgery();
 
-app.MapRazorComponents<App>();
+app.MapRazorComponents<App>()
+    .AddAdditionalAssemblies(typeof(PasswordManager.Web.Client.Pages.Counter).Assembly);
 
 app.Run();
