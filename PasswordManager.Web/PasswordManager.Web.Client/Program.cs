@@ -15,6 +15,7 @@ public class Program
         builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
         builder.Services.AddAuthorizationCore();
         builder.Services.AddBlazoredLocalStorage();
+        builder.Services.AddScoped<PasswordService>();
         
         builder.Services.AddScoped(sp => new HttpClient
         {
