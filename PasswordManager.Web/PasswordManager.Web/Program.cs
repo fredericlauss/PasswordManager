@@ -38,10 +38,7 @@ builder.Services.AddScoped(sp => new HttpClient
 });
 builder.Services.AddScoped<PasswordService>();
 
-
 var app = builder.Build();
-
-
 
 if (!app.Environment.IsDevelopment())
 {
@@ -52,13 +49,12 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseStaticFiles();
+app.UseRouting();
 app.UseAntiforgery();
-
+app.UseStaticFiles();
 
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(PasswordManager.Web.Client._Imports).Assembly);
+    .AddAdditionalAssemblies(typeof(PasswordManager.Web.Client.Pages.Home).Assembly);
 
 app.Run();

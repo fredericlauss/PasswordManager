@@ -11,10 +11,10 @@ public class Program
         var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
         // Configuration des services
-        builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
         builder.Services.AddAuthorizationCore();
         builder.Services.AddBlazoredLocalStorage();
+        builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<PasswordService>();
         
         builder.Services.AddScoped(sp => new HttpClient

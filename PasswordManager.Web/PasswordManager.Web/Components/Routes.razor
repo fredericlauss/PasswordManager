@@ -1,14 +1,14 @@
 ﻿@inject NavigationManager Navigation
 
 <CascadingAuthenticationState>
-    <Router AppAssembly="@typeof(App).Assembly">
+    <Router AppAssembly="@typeof(Program).Assembly" AdditionalAssemblies="@additionalAssemblies">
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)">
                 <NotAuthorized>
-                    @{
-                        var returnUrl = Navigation.ToBaseRelativePath(Navigation.Uri);
-                    }
-                    <RedirectToLogin ReturnUrl="@returnUrl" />
+                    <div class="text-center">
+                        <h1>Please log in</h1>
+                        <a href="login" class="btn btn-primary">Login</a>
+                    </div>
                 </NotAuthorized>
             </AuthorizeRouteView>
             <FocusOnNavigate RouteData="@routeData" Selector="h1" />
@@ -21,3 +21,8 @@
         </NotFound>
     </Router>
 </CascadingAuthenticationState>
+
+@code {
+    private IEnumerable<System.Reflection.Assembly> additionalAssemblies = 
+        new[] { typeof(PasswordManager.Web.Client.Pages.Home).Assembly };
+}
