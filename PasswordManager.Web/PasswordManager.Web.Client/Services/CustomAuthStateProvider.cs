@@ -30,6 +30,7 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
         }
         catch (Exception)
         {
+            // TODO: Log l'erreur
             // En cas d'erreur (par exemple, pendant le prérendu), retourner l'état anonyme
             return _anonymous;
         }
