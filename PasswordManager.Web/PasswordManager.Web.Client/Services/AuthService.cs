@@ -9,16 +9,11 @@ namespace PasswordManager.Web.Client.Services
     public class AuthService : IAuthService
     {
         private readonly HttpClient _http;
-        private readonly AuthenticationStateProvider _authStateProvider;
         private readonly ILocalStorageService _localStorage;
 
-        public AuthService(
-            HttpClient http, 
-            AuthenticationStateProvider authStateProvider,
-            ILocalStorageService localStorage)
+        public AuthService(HttpClient http, ILocalStorageService localStorage)
         {
             _http = http;
-            _authStateProvider = authStateProvider;
             _localStorage = localStorage;
         }
 
@@ -30,11 +25,7 @@ namespace PasswordManager.Web.Client.Services
                 var loginResponse = await response.Content.ReadFromJsonAsync<LoginResponse>();
                 if (loginResponse != null && !string.IsNullOrEmpty(loginResponse.Token))
                 {
-                    // Stockage du token
                     await _localStorage.SetItemAsync("authToken", loginResponse.Token);
-                    
-                    // Mise à jour de l'état d'authentification
-                    ((CustomAuthStateProvider)_authStateProvider).NotifyUserAuthentication(loginResponse.Token);
                     return true;
                 }
             }
@@ -66,6 +57,11 @@ namespace PasswordManager.Web.Client.Services
         public async Task Logout()
         {
             // Nettoyer les données d'authentification si nécessaire
+        }
+
+        public async Task<string?> GetToken()
+        {
+            return await _localStorage.GetItemAsync<string>("authToken");
         }
     }
 

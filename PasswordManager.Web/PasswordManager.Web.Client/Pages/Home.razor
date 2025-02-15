@@ -1,26 +1,54 @@
 @page "/"
-@rendermode InteractiveWebAssembly
-@using Microsoft.AspNetCore.Components.Authorization
+@inject IAuthService AuthService
 @inject NavigationManager NavigationManager
+@rendermode InteractiveWebAssembly
 
 <PageTitle>PasswordManager</PageTitle>
 
-<AuthorizeView>
-    <Authorized>
-        <h1>Welcome to PasswordManager, @context.User.Identity?.Name!</h1>
-    </Authorized>
-    <NotAuthorized>
-        <div class="text-center">
-            <h1>Welcome to PasswordManager</h1>
-            <p>Please log in to access your passwords.</p>
-            <button class="btn btn-primary" @onclick="NavigateToLogin">Login</button>
-        </div>
-    </NotAuthorized>
-</AuthorizeView>
+@if (isLoading)
+{
+    <p>Loading...</p>
+}
+else if (isAuthenticated)
+{
+    <h1>Welcome to PasswordManager!</h1>
+    <p>You are logged in.</p>
+    <button class="btn btn-danger" @onclick="Logout">Logout</button>
+}
+else
+{
+    <div class="text-center">
+        <h1>Welcome to PasswordManager</h1>
+        <p>Please log in to access your passwords.</p>
+        <button class="btn btn-primary" @onclick="NavigateToLogin">Login</button>
+    </div>
+}
 
 @code {
+    private bool isLoading = true;
+    private bool isAuthenticated = false;
+    private bool firstRender = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var token = await AuthService.GetToken();
+            isAuthenticated = !string.IsNullOrEmpty(token);
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
     private void NavigateToLogin()
     {
         NavigationManager.NavigateTo("login");
+    }
+
+    private async Task Logout()
+    {
+        await AuthService.Logout();
+        isAuthenticated = false;
+        NavigationManager.NavigateTo("/");
     }
 }
