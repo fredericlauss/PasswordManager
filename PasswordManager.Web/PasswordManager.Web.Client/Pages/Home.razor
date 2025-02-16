@@ -1,33 +1,123 @@
 @page "/"
+@using PasswordManager.Core.Models
 @inject IAuthService AuthService
+@inject PasswordService PasswordService
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
 @rendermode InteractiveWebAssembly
 
-<PageTitle>PasswordManager</PageTitle>
+<PageTitle>Password Manager</PageTitle>
 
 @if (isLoading)
 {
-    <p>Loading...</p>
+    <div class="text-center">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
 }
-else if (isAuthenticated)
+else if (!isAuthenticated)
 {
-    <h1>Welcome to PasswordManager!</h1>
-    <p>You are logged in.</p>
-    <button class="btn btn-danger" @onclick="Logout">Logout</button>
+    <div class="text-center">
+        <h1>Welcome to Password Manager</h1>
+        <p>Please log in to access your passwords.</p>
+        <button class="btn btn-primary" @onclick="NavigateToLogin">Login</button>
+    </div>
 }
 else
 {
-    <div class="text-center">
-        <h1>Welcome to PasswordManager</h1>
-        <p>Please log in to access your passwords.</p>
-        <button class="btn btn-primary" @onclick="NavigateToLogin">Login</button>
+    <div class="container">
+        <div class="row mb-3">
+            <div class="col">
+                <h1>My Passwords</h1>
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-primary" @onclick="NavigateToNewPassword">
+                    <i class="fas fa-plus"></i> Add Password
+                </button>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search..." 
+                           @bind-value="searchTerm" @bind-value:event="oninput" 
+                           @onkeyup="HandleSearch" />
+                    <button class="btn btn-outline-secondary" type="button" @onclick="HandleSearch">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <select class="form-select" @bind="selectedCategory">
+                    <option value="">All Categories</option>
+                    @foreach (var category in categories)
+                    {
+                        <option value="@category">@category</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        @if (passwords == null || !passwords.Any())
+        {
+            <div class="alert alert-info">
+                No passwords found. Start by adding a new password!
+            </div>
+        }
+        else
+        {
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                @foreach (var password in filteredPasswords)
+                {
+                    <div class="col">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">@password.Title</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">@password.Category</h6>
+                                <p class="card-text">
+                                    <strong>Username:</strong> @password.Username<br />
+                                    <strong>Website:</strong> 
+                                    @if (!string.IsNullOrEmpty(password.Website))
+                                    {
+                                        <a href="@password.Website" target="_blank">@password.Website</a>
+                                    }
+                                </p>
+                                <div class="btn-group">
+                                    <button class="btn btn-primary btn-sm" 
+                                            @onclick="() => NavigateToEdit(password.Id)">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" 
+                                            @onclick="() => DeletePassword(password.Id)">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
     </div>
 }
 
 @code {
     private bool isLoading = true;
     private bool isAuthenticated = false;
-    private bool firstRender = true;
+    private List<StoredPassword> passwords = new();
+    private HashSet<string> categories = new();
+    private string searchTerm = "";
+    private string selectedCategory = "";
+
+    private IEnumerable<StoredPassword> filteredPasswords => passwords
+        .Where(p => (string.IsNullOrEmpty(selectedCategory) || p.Category == selectedCategory) &&
+                    (string.IsNullOrEmpty(searchTerm) || 
+                     p.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                     p.Username.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                     p.Website.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)))
+        .ToList();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -35,8 +125,37 @@ else
         {
             var token = await AuthService.GetToken();
             isAuthenticated = !string.IsNullOrEmpty(token);
+            
+            if (isAuthenticated)
+            {
+                await LoadPasswords();
+            }
+            
             isLoading = false;
             StateHasChanged();
+        }
+    }
+
+    private async Task LoadPasswords()
+    {
+        passwords = await PasswordService.GetPasswords();
+        categories = passwords.Select(p => p.Category)
+                            .Where(c => !string.IsNullOrEmpty(c))
+                            .Distinct()
+                            .ToHashSet();
+    }
+
+    private void HandleSearch()
+    {
+        StateHasChanged();
+    }
+
+    private async Task DeletePassword(Guid id)
+    {
+        if (await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this password?"))
+        {
+            await PasswordService.DeletePassword(id);
+            await LoadPasswords();
         }
     }
 
@@ -45,10 +164,13 @@ else
         NavigationManager.NavigateTo("login");
     }
 
-    private async Task Logout()
+    private void NavigateToNewPassword()
     {
-        await AuthService.Logout();
-        isAuthenticated = false;
-        NavigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo("password/new");
+    }
+
+    private void NavigateToEdit(Guid id)
+    {
+        NavigationManager.NavigateTo($"password/edit/{id}");
     }
 }
