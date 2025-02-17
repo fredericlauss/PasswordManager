@@ -92,6 +92,7 @@ namespace PasswordManager.Web.Client.Services
                 _http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                 var response = await _http.PutAsJsonAsync($"{BaseUrl}/{id}", request);
+                Console.WriteLine($"Update response: {response.StatusCode}"); // Debug
                 return response.IsSuccessStatusCode;
             }
             catch (Exception ex)
@@ -108,7 +109,9 @@ namespace PasswordManager.Web.Client.Services
                 var token = await _localStorage.GetItemAsync<string>("authToken");
                 _http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
+                Console.WriteLine($"Deleting password with ID: {id}"); // Debug
                 var response = await _http.DeleteAsync($"{BaseUrl}/{id}");
+                Console.WriteLine($"Delete response: {response.StatusCode}"); // Debug
                 return response.IsSuccessStatusCode;
             }
             catch (Exception ex)

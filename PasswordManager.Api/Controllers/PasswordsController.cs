@@ -125,50 +125,78 @@ namespace PasswordManager.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePassword(Guid id, UpdatePasswordRequest request)
+        public async Task<IActionResult> UpdatePassword(Guid id, [FromBody] UpdatePasswordRequest request)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userId == null) return Unauthorized();
-
-            var password = await _context.StoredPasswords
-                .FirstOrDefaultAsync(p => p.Id == id && p.UserId.ToString() == userId);
-
-            if (password == null) return NotFound();
-
-            password.Title = request.Title;
-            password.Username = request.Username;
-            password.Website = request.Website;
-            password.Notes = request.Notes;
-            password.Category = request.Category;
-            password.UpdatedAt = DateTime.UtcNow;
-
-            if (!string.IsNullOrEmpty(request.Password))
+            try
             {
-                password.EncryptedPassword = _encryptionService.Encrypt(
-                    request.Password,
-                    _configuration["AppSettings:EncryptionKey"]!
-                );
-            }
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (userId == null) return Unauthorized();
 
-            await _context.SaveChangesAsync();
-            return NoContent();
+                Console.WriteLine($"Updating password {id} for user {userId}"); // Debug log
+
+                var password = await _context.StoredPasswords
+                    .FirstOrDefaultAsync(p => p.Id == id && p.UserId == Guid.Parse(userId));
+
+                if (password == null)
+                {
+                    Console.WriteLine($"Password {id} not found for user {userId}"); // Debug log
+                    return NotFound();
+                }
+
+                password.Title = request.Title;
+                password.Username = request.Username;
+                password.Website = request.Website;
+                password.Notes = request.Notes;
+                password.Category = request.Category;
+                password.UpdatedAt = DateTime.UtcNow;
+
+                if (!string.IsNullOrEmpty(request.Password))
+                {
+                    password.EncryptedPassword = _encryptionService.Encrypt(
+                        request.Password,
+                        _configuration["AppSettings:EncryptionKey"]!
+                    );
+                }
+
+                await _context.SaveChangesAsync();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating password: {ex}"); // Debug log
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePassword(Guid id)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userId == null) return Unauthorized();
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (userId == null) return Unauthorized();
 
-            var password = await _context.StoredPasswords
-                .FirstOrDefaultAsync(p => p.Id == id && p.UserId.ToString() == userId);
+                Console.WriteLine($"Deleting password {id} for user {userId}"); // Debug log
 
-            if (password == null) return NotFound();
+                var password = await _context.StoredPasswords
+                    .FirstOrDefaultAsync(p => p.Id == id && p.UserId == Guid.Parse(userId));
 
-            _context.StoredPasswords.Remove(password);
-            await _context.SaveChangesAsync();
+                if (password == null)
+                {
+                    Console.WriteLine($"Password {id} not found for user {userId}"); // Debug log
+                    return NotFound();
+                }
 
-            return NoContent();
+                _context.StoredPasswords.Remove(password);
+                await _context.SaveChangesAsync();
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting password: {ex}"); // Debug log
+                return StatusCode(500, "Internal server error");
+            }
         }
     }
 } 
