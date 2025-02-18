@@ -5,6 +5,7 @@ using PasswordManager.Core.Data;
 using PasswordManager.Core.Models;
 using PasswordManager.Core.Services;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
 namespace PasswordManager.Api.Controllers
 {
@@ -54,15 +55,35 @@ namespace PasswordManager.Api.Controllers
         [HttpGet("search")]
         public async Task<ActionResult<IEnumerable<StoredPassword>>> SearchPasswords([FromQuery] string query)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userId == null) return Unauthorized();
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (userId == null) return Unauthorized();
 
-            var passwords = await _context.StoredPasswords
-                .Where(p => p.UserId.ToString() == userId &&
-                    (p.Title.Contains(query) || p.Username.Contains(query) || p.Website.Contains(query)))
-                .ToListAsync();
+                var userGuid = Guid.Parse(userId);
+                Console.WriteLine($"Searching passwords for user {userId} with query: {query}");
 
-            return Ok(passwords);
+                // Récupérer les mots de passe de l'utilisateur et filtrer en mémoire
+                var passwords = await _context.StoredPasswords
+                    .Where(p => p.UserId == userGuid)
+                    .ToListAsync();
+
+                var filteredPasswords = passwords.Where(p =>
+                    p.Title.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                    p.Username.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                    p.Website.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                    p.Category.Contains(query, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                Console.WriteLine($"Found {filteredPasswords.Count} passwords matching the query");
+
+                return Ok(filteredPasswords);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in SearchPasswords: {ex.Message}");
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         [HttpPost]

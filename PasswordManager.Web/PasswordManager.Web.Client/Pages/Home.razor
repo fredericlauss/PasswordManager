@@ -49,21 +49,12 @@ else
                     </button>
                 </div>
             </div>
-            <div class="col-md-4">
-                <select class="form-select" @bind="selectedCategory">
-                    <option value="">All Categories</option>
-                    @foreach (var category in categories)
-                    {
-                        <option value="@category">@category</option>
-                    }
-                </select>
-            </div>
         </div>
 
-        @if (passwords == null || !passwords.Any())
+        @if (!passwords.Any())
         {
             <div class="alert alert-info">
-                No passwords found. Start by adding a new password!
+                No passwords found.
             </div>
         }
         else
@@ -75,23 +66,17 @@ else
                         <div class="card h-100">
                             <div class="card-body">
                                 <h5 class="card-title">@password.Title</h5>
-                                <h6 class="card-subtitle mb-2 text-muted">@password.Category</h6>
                                 <p class="card-text">
                                     <strong>Username:</strong> @password.Username<br />
-                                    <strong>Website:</strong> 
-                                    @if (!string.IsNullOrEmpty(password.Website))
-                                    {
-                                        <a href="@password.Website" target="_blank">@password.Website</a>
-                                    }
+                                    <strong>Website:</strong> @password.Website<br />
+                                    <strong>Category:</strong> @password.Category
                                 </p>
                                 <div class="btn-group">
-                                    <button class="btn btn-primary btn-sm" 
-                                            @onclick="() => NavigateToEdit(password.Id)">
-                                        <i class="fas fa-edit"></i> Edit
+                                    <button class="btn btn-primary btn-sm" @onclick="() => NavigateToEdit(password.Id)">
+                                        Edit
                                     </button>
-                                    <button class="btn btn-danger btn-sm" 
-                                            @onclick="() => DeletePassword(password.Id)">
-                                        <i class="fas fa-trash"></i> Delete
+                                    <button class="btn btn-danger btn-sm" @onclick="() => DeletePassword(password.Id)">
+                                        Delete
                                     </button>
                                 </div>
                             </div>
@@ -107,9 +92,7 @@ else
     private bool isLoading = true;
     private bool isAuthenticated = false;
     private List<StoredPassword> passwords = new();
-    private HashSet<string> categories = new();
     private string searchTerm = "";
-    private string selectedCategory = "";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -130,34 +113,24 @@ else
 
     private async Task LoadPasswords()
     {
+        Console.WriteLine("Loading passwords..."); // Debug
         passwords = await PasswordService.GetPasswords();
-        categories = passwords.Select(p => p.Category)
-                            .Where(c => !string.IsNullOrEmpty(c))
-                            .Distinct()
-                            .ToHashSet();
+        Console.WriteLine($"Loaded {passwords.Count} passwords"); // Debug
     }
 
     private async Task HandleSearch()
     {
+        Console.WriteLine($"Searching for: {searchTerm}"); // Debug
         if (!string.IsNullOrEmpty(searchTerm))
         {
             passwords = await PasswordService.SearchPasswords(searchTerm);
         }
-        else if (!string.IsNullOrEmpty(selectedCategory))
-        {
-            passwords = await PasswordService.GetPasswords(selectedCategory);
-        }
         else
         {
-            passwords = await PasswordService.GetPasswords();
+            await LoadPasswords();
         }
+        Console.WriteLine($"Found {passwords.Count} passwords"); // Debug
         StateHasChanged();
-    }
-
-    private async Task OnCategoryChanged(string newCategory)
-    {
-        selectedCategory = newCategory;
-        await HandleSearch();
     }
 
     private async Task DeletePassword(Guid id)
