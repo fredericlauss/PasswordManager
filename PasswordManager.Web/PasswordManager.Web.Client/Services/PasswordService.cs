@@ -57,7 +57,7 @@ namespace PasswordManager.Web.Client.Services
                 var token = await _localStorage.GetItemAsync<string>("authToken");
                 _http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var response = await _http.GetFromJsonAsync<List<StoredPassword>>($"{BaseUrl}/search?query={searchTerm}");
+                var response = await _http.GetFromJsonAsync<List<StoredPassword>>($"{BaseUrl}/search?query={Uri.EscapeDataString(searchTerm)}");
                 return response ?? new List<StoredPassword>();
             }
             catch (Exception ex)

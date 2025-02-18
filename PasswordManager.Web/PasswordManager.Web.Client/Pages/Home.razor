@@ -69,7 +69,7 @@ else
         else
         {
             <div class="row row-cols-1 row-cols-md-3 g-4">
-                @foreach (var password in filteredPasswords)
+                @foreach (var password in passwords)
                 {
                     <div class="col">
                         <div class="card h-100">
@@ -111,14 +111,6 @@ else
     private string searchTerm = "";
     private string selectedCategory = "";
 
-    private IEnumerable<StoredPassword> filteredPasswords => passwords
-        .Where(p => (string.IsNullOrEmpty(selectedCategory) || p.Category == selectedCategory) &&
-                    (string.IsNullOrEmpty(searchTerm) || 
-                     p.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                     p.Username.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                     p.Website.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)))
-        .ToList();
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -145,9 +137,27 @@ else
                             .ToHashSet();
     }
 
-    private void HandleSearch()
+    private async Task HandleSearch()
     {
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            passwords = await PasswordService.SearchPasswords(searchTerm);
+        }
+        else if (!string.IsNullOrEmpty(selectedCategory))
+        {
+            passwords = await PasswordService.GetPasswords(selectedCategory);
+        }
+        else
+        {
+            passwords = await PasswordService.GetPasswords();
+        }
         StateHasChanged();
+    }
+
+    private async Task OnCategoryChanged(string newCategory)
+    {
+        selectedCategory = newCategory;
+        await HandleSearch();
     }
 
     private async Task DeletePassword(Guid id)
