@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using Blazored.LocalStorage;
 using PasswordManager.Core.Models;
+using PasswordManager.Web.Client.Models;
 
 namespace PasswordManager.Web.Client.Services
 {
@@ -67,7 +68,7 @@ namespace PasswordManager.Web.Client.Services
             }
         }
 
-        public async Task<bool> CreatePassword(CreatePasswordRequest request)
+        public async Task<bool> CreatePassword(PasswordManager.Core.Models.CreatePasswordRequest request)
         {
             try
             {
@@ -84,7 +85,7 @@ namespace PasswordManager.Web.Client.Services
             }
         }
 
-        public async Task<bool> UpdatePassword(Guid id, UpdatePasswordRequest request)
+        public async Task<bool> UpdatePassword(Guid id, PasswordManager.Core.Models.UpdatePasswordRequest request)
         {
             try
             {
@@ -92,7 +93,6 @@ namespace PasswordManager.Web.Client.Services
                 _http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                 var response = await _http.PutAsJsonAsync($"{BaseUrl}/{id}", request);
-                Console.WriteLine($"Update response: {response.StatusCode}"); // Debug
                 return response.IsSuccessStatusCode;
             }
             catch (Exception ex)
@@ -109,9 +109,7 @@ namespace PasswordManager.Web.Client.Services
                 var token = await _localStorage.GetItemAsync<string>("authToken");
                 _http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                Console.WriteLine($"Deleting password with ID: {id}"); // Debug
                 var response = await _http.DeleteAsync($"{BaseUrl}/{id}");
-                Console.WriteLine($"Delete response: {response.StatusCode}"); // Debug
                 return response.IsSuccessStatusCode;
             }
             catch (Exception ex)
@@ -131,7 +129,8 @@ namespace PasswordManager.Web.Client.Services
                 var response = await _http.PostAsJsonAsync("http://localhost:5001/api/PasswordGenerator/generate", request);
                 if (response.IsSuccessStatusCode)
                 {
-                    return await response.Content.ReadAsStringAsync();
+                    var result = await response.Content.ReadFromJsonAsync<GeneratedPasswordResponse>();
+                    return result?.Password ?? string.Empty;
                 }
                 return string.Empty;
             }
