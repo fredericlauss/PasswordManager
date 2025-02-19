@@ -120,5 +120,26 @@ namespace PasswordManager.Web.Client.Services
                 return false;
             }
         }
+
+        public async Task<string> GeneratePassword(GeneratePasswordRequest request)
+        {
+            try
+            {
+                var token = await _localStorage.GetItemAsync<string>("authToken");
+                _http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                var response = await _http.PostAsJsonAsync("http://localhost:5001/api/PasswordGenerator/generate", request);
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadAsStringAsync();
+                }
+                return string.Empty;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error generating password: {ex.Message}");
+                return string.Empty;
+            }
+        }
     }
 } 
