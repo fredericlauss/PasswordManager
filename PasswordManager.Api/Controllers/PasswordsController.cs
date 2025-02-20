@@ -47,6 +47,15 @@ namespace PasswordManager.Api.Controllers
 
             var passwords = await query.ToListAsync();
             
+            // Décrypter les mots de passe avant de les envoyer
+            foreach (var password in passwords)
+            {
+                password.EncryptedPassword = _encryptionService.Decrypt(
+                    password.EncryptedPassword,
+                    _configuration["AppSettings:EncryptionKey"]!
+                );
+            }
+            
             Console.WriteLine($"Found {passwords.Count} passwords");
             
             return Ok(passwords);
@@ -74,6 +83,15 @@ namespace PasswordManager.Api.Controllers
                     p.Website.Contains(query, StringComparison.OrdinalIgnoreCase) ||
                     p.Category.Contains(query, StringComparison.OrdinalIgnoreCase))
                     .ToList();
+
+                // Décrypter les mots de passe avant de les envoyer
+                foreach (var password in filteredPasswords)
+                {
+                    password.EncryptedPassword = _encryptionService.Decrypt(
+                        password.EncryptedPassword,
+                        _configuration["AppSettings:EncryptionKey"]!
+                    );
+                }
 
                 Console.WriteLine($"Found {filteredPasswords.Count} passwords matching the query");
 
