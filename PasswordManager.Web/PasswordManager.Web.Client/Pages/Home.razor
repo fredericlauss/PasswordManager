@@ -40,14 +40,9 @@ else
 
         <div class="row mb-3">
             <div class="col-md-4">
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search..." 
-                           @bind-value="searchTerm" @bind-value:event="oninput" 
-                           @onkeyup="HandleSearch" />
-                    <button class="btn btn-outline-secondary" type="button" @onclick="HandleSearch">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
+                <input type="text" class="form-control" placeholder="Search..." 
+                       @bind-value="searchTerm" @bind-value:event="oninput" 
+                       @onkeyup="HandleSearch" />
             </div>
         </div>
 
