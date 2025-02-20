@@ -81,12 +81,12 @@ else
                                         <strong>Password</strong>
                                     </div>
                                     <div class="input-group">
-                                        <input type="@(showPassword ? "text" : "password")" 
+                                        <input type="@(visiblePasswords.Contains(password.Id) ? "text" : "password")" 
                                                class="form-control" 
                                                value="@password.EncryptedPassword" 
                                                readonly />
-                                        <button class="btn btn-outline-secondary" @onclick="() => TogglePasswordVisibility()">
-                                            @(showPassword ? "Hide" : "Show")
+                                        <button class="btn btn-outline-secondary" @onclick="() => TogglePasswordVisibility(password.Id)">
+                                            @(visiblePasswords.Contains(password.Id) ? "Hide" : "Show")
                                         </button>
                                         <button class="btn btn-outline-secondary" @onclick="() => CopyToClipboard(password.EncryptedPassword)">
                                             Copy
@@ -125,7 +125,7 @@ else
     private bool isAuthenticated = false;
     private List<StoredPassword> passwords = new();
     private string searchTerm = "";
-    private bool showPassword = false;
+    private HashSet<Guid> visiblePasswords = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -195,8 +195,15 @@ else
         await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", text);
     }
 
-    private void TogglePasswordVisibility()
+    private void TogglePasswordVisibility(Guid passwordId)
     {
-        showPassword = !showPassword;
+        if (visiblePasswords.Contains(passwordId))
+        {
+            visiblePasswords.Remove(passwordId);
+        }
+        else
+        {
+            visiblePasswords.Add(passwordId);
+        }
     }
 }
