@@ -41,8 +41,21 @@ else
         <div class="row mb-3">
             <div class="col-md-4">
                 <input type="text" class="form-control" placeholder="Search..." 
-                       @bind-value="searchTerm" @bind-value:event="oninput" 
-                       @onkeyup="HandleSearch" />
+                       @bind-value="searchTerm" />
+            </div>
+            <div class="col-md-4">
+                <select class="form-select" @bind="selectedCategory">
+                    <option value="">All Categories</option>
+                    @foreach (var category in categories)
+                    {
+                        <option value="@category">@category</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary w-100" @onclick="HandleSearch">
+                    Search
+                </button>
             </div>
         </div>
 
@@ -133,6 +146,8 @@ else
     private List<StoredPassword> passwords = new();
     private string searchTerm = "";
     private HashSet<Guid> visiblePasswords = new();
+    private string selectedCategory = "";
+    private List<string> categories = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -151,6 +166,18 @@ else
         }
     }
 
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPasswords();
+        // Extraire les catégories uniques des mots de passe
+        categories = passwords
+            .Select(p => p.Category)
+            .Where(c => !string.IsNullOrEmpty(c))
+            .Distinct()
+            .OrderBy(c => c)
+            .ToList();
+    }
+
     private async Task LoadPasswords()
     {
         Console.WriteLine("Loading passwords..."); // Debug
@@ -160,16 +187,21 @@ else
 
     private async Task HandleSearch()
     {
-        Console.WriteLine($"Searching for: {searchTerm}"); // Debug
         if (!string.IsNullOrEmpty(searchTerm))
         {
-            passwords = await PasswordService.SearchPasswords(searchTerm);
+            var filteredPasswords = await PasswordService.SearchPasswords(searchTerm);
+            passwords = selectedCategory == "" 
+                ? filteredPasswords 
+                : filteredPasswords.Where(p => p.Category == selectedCategory).ToList();
         }
         else
         {
             await LoadPasswords();
+            if (selectedCategory != "")
+            {
+                passwords = passwords.Where(p => p.Category == selectedCategory).ToList();
+            }
         }
-        Console.WriteLine($"Found {passwords.Count} passwords"); // Debug
         StateHasChanged();
     }
 
@@ -212,5 +244,11 @@ else
         {
             visiblePasswords.Add(passwordId);
         }
+    }
+
+    private async Task OnCategoryChanged(ChangeEventArgs e)
+    {
+        selectedCategory = e.Value?.ToString() ?? "";
+        await HandleSearch();
     }
 }
