@@ -54,68 +54,75 @@ else
         }
         else
         {
-            <div class="row row-cols-1 row-cols-md-3 g-4">
-                @foreach (var password in passwords)
-                {
-                    <div class="col">
-                        <div class="card h-100 shadow-sm">
-                            <div class="card-header bg-light">
-                                <h5 class="card-title mb-0">@password.Title</h5>
-                                <small class="text-muted">@password.Category</small>
+            var groupedPasswords = passwords.GroupBy(p => p.Category);
+            
+            @foreach (var group in groupedPasswords)
+            {
+                <div class="mb-4">
+                    <h3 class="mb-3">@(string.IsNullOrEmpty(group.Key) ? "Uncategorized" : group.Key)</h3>
+                    <div class="row row-cols-1 row-cols-md-3 g-4">
+                        @foreach (var password in group)
+                        {
+                            <div class="col">
+                                <div class="card h-100 shadow-sm">
+                                    <div class="card-header bg-light">
+                                        <h5 class="card-title mb-0">@password.Title</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <strong>Username</strong>
+                                            </div>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" value="@password.Username" readonly />
+                                                <button class="btn btn-outline-secondary" @onclick="() => CopyToClipboard(password.Username)">
+                                                    Copy
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <strong>Password</strong>
+                                            </div>
+                                            <div class="input-group">
+                                                <input type="@(visiblePasswords.Contains(password.Id) ? "text" : "password")" 
+                                                       class="form-control" 
+                                                       value="@password.EncryptedPassword" 
+                                                       readonly />
+                                                <button class="btn btn-outline-secondary" @onclick="() => TogglePasswordVisibility(password.Id)">
+                                                    @(visiblePasswords.Contains(password.Id) ? "Hide" : "Show")
+                                                </button>
+                                                <button class="btn btn-outline-secondary" @onclick="() => CopyToClipboard(password.EncryptedPassword)">
+                                                    Copy
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <strong>Website</strong>
+                                            </div>
+                                            <a href="@password.Website" target="_blank" class="text-decoration-none">
+                                                @password.Website
+                                            </a>
+                                        </div>
+
+                                        <div class="d-flex justify-content-end gap-2">
+                                            <button class="btn btn-primary btn-sm" @onclick="() => NavigateToEdit(password.Id)">
+                                                Edit
+                                            </button>
+                                            <button class="btn btn-danger btn-sm" @onclick="() => DeletePassword(password.Id)">
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <div class="mb-3">
-                                    <div class="d-flex align-items-center mb-2">
-                                        <strong>Username</strong>
-                                    </div>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" value="@password.Username" readonly />
-                                        <button class="btn btn-outline-secondary" @onclick="() => CopyToClipboard(password.Username)">
-                                            Copy
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <div class="d-flex align-items-center mb-2">
-                                        <strong>Password</strong>
-                                    </div>
-                                    <div class="input-group">
-                                        <input type="@(visiblePasswords.Contains(password.Id) ? "text" : "password")" 
-                                               class="form-control" 
-                                               value="@password.EncryptedPassword" 
-                                               readonly />
-                                        <button class="btn btn-outline-secondary" @onclick="() => TogglePasswordVisibility(password.Id)">
-                                            @(visiblePasswords.Contains(password.Id) ? "Hide" : "Show")
-                                        </button>
-                                        <button class="btn btn-outline-secondary" @onclick="() => CopyToClipboard(password.EncryptedPassword)">
-                                            Copy
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <div class="d-flex align-items-center mb-2">
-                                        <strong>Website</strong>
-                                    </div>
-                                    <a href="@password.Website" target="_blank" class="text-decoration-none">
-                                        @password.Website
-                                    </a>
-                                </div>
-
-                                <div class="d-flex justify-content-end gap-2">
-                                    <button class="btn btn-primary btn-sm" @onclick="() => NavigateToEdit(password.Id)">
-                                        Edit
-                                    </button>
-                                    <button class="btn btn-danger btn-sm" @onclick="() => DeletePassword(password.Id)">
-                                        Delete
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                        }
                     </div>
-                }
-            </div>
+                </div>
+            }
         }
     </div>
 }
