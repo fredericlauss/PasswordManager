@@ -160,6 +160,12 @@ namespace PasswordManager.Api.Controllers
                 return NotFound();
             }
 
+            // Décrypter le mot de passe avant de le renvoyer
+            password.EncryptedPassword = _encryptionService.Decrypt(
+                password.EncryptedPassword,
+                _configuration["AppSettings:EncryptionKey"]!
+            );
+
             return Ok(password);
         }
 
