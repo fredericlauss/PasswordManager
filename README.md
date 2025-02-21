@@ -1,107 +1,30 @@
-# Password Manager Project
+# Projet Fil Rouge : Gestionnaire de Mots de Passe
+
+## Description
+
+Ce projet vise à développer une solution Blazor pour un gestionnaire de mots de passe, destiné aux étudiants en enseignement supérieur. Il permettra aux utilisateurs de stocker, gérer et accéder à leurs mots de passe en toute sécurité grâce à une interface conviviale.
+
+## Fonctionnalités principales
+
+- [x] Authentification (3pts) : Inscription, connexion.
+- [x] Gestion des mots de passe (2pts) : Ajouter, modifier et supprimer des mots de passe.
+- [x] Catégorisation (2pts) : Organiser les mots de passe par catégorie.
+- [x] Recherche rapide (2pts) : Trouver facilement des mots de passe via une barre de recherche.
+- [x] Chiffrement (3pts) : Sécuriser les données avec des algorithmes de chiffrement robustes.
+- [ ] Mode hors ligne (2pts) : Accès local sécurisé sans dépendance réseau.
+- [x] Sécurité (3pts) : Utilisation d'un mot de passe principal pour la décryptage, verrouillage après tentatives échouées.
+- [x] Générateur de mots de passe (2pts) : Génération de mots de passe complexes et sécurisés avec critères personnalisables.
+- [x] Sauvegarde (5pts) : sur une base de données SQLite.
+- [x] Interface utilisateur (4pts) : Simple, intuitive, et responsive avec recherche et filtrage des mots de passe.
+- [ ] Points bonus (5pts): Tests unitaires, et Application mobile
+
+## Technologies utilisées
+
+- [x] Framework front-end (5pts) : Blazor
+- [x] Backend (2pts) : ASP.NET Core Web API
+- [x] Base de données : SQLite
+- [x] Autres (5pts) : Entity Framework Core, Dependency Injection, etc.
 
 ## Auteurs
-- Fr�d�ric LAUSSON
 
-## Fonctionnalit�s r�alis�es
-
-   Authentification : Inscription, connexion.
-   Gestion des mots de passe : Ajouter, modifier et supprimer des mots de passe.
-   Cat�gorisation : Organiser les mots de passe par cat�gorie.
-   Recherche rapide : Trouver facilement des mots de passe via une barre de recherche.
-   Chiffrement : S�curiser les donn�es avec des algorithmes de chiffrement robustes.
-   Mode hors ligne : Acc�s local s�curis� sans d�pendance r�seau.
-   S�curit� : Utilisation d�un mot de passe principal pour la d�cryptage, verrouillage apr�s tentatives �chou�es.
-   G�n�rateur de mots de passe : G�n�ration de mots de passe complexes et s�curis�s avec crit�res personnalisables.
-   Sauvegarde : sur une base de donn�es SQLite.
-   Interface utilisateur : Simple, intuitive, et responsive avec recherche et filtrage des mots de passe.
-   Points bonus: Tests unitaires, et Application mobile
-
-   # Password Manager API
-
-Une API sécurisée pour la gestion de mots de passe, développée avec ASP.NET Core.
-
-## 🚀 Fonctionnalités prévues
-
-### 1. Configuration et Sécurité
-- [ ] Classe AppSettings pour centraliser la configuration
-- [ ] Validation du JWT token
-- [ ] Hachage des mots de passe (bcrypt/argon2)
-- [ ] Rate limiting pour prévenir les attaques
-- [ ] Logs structurés (Serilog)
-
-### 2. Controllers et Endpoints
-#### AuthController
-- [ ] Login endpoint
-- [ ] Register endpoint
-- [ ] Refresh token endpoint
-- [ ] Change password endpoint
-
-#### PasswordController
-- [ ] CRUD operations
-- [ ] Partage de mots de passe
-- [ ] Recherche/filtrage
-- [ ] Export sécurisé
-
-#### UserController
-- [ ] Gestion du profil utilisateur
-- [ ] Préférences utilisateur
-
-### 3. Services
-#### AuthService
-- [ ] Génération de JWT tokens
-- [ ] Validation des credentials
-- [ ] Gestion des refresh tokens
-
-#### PasswordService
-- [ ] Logique de chiffrement/déchiffrement
-- [ ] Validation des mots de passe
-- [ ] Génération de mots de passe sécurisés
-
-#### UserService
-- [ ] Gestion des utilisateurs
-- [ ] Validation des données
-
-### 4. Models
-#### DTOs
-- [ ] LoginDto
-- [ ] RegisterDto
-- [ ] PasswordDto
-- [ ] UserDto
-- [ ] TokenDto
-
-#### Entities
-- [ ] User
-- [ ] Password
-- [ ] RefreshToken
-- [ ] AuditLog
-
-### 5. Base de données
-- [ ] Configuration Entity Framework Core
-- [ ] Migrations
-- [ ] Repositories
-- [ ] Relations entre entités
-- [ ] Index pour les performances
-
-### 6. Validation et Erreurs
-- [ ] FluentValidation
-- [ ] Middleware de gestion d'erreurs global
-- [ ] Codes d'erreur personnalisés
-- [ ] Validation des modèles
-
-### 7. Tests
-#### Tests unitaires
-- [ ] Services
-- [ ] Controllers
-- [ ] Validation
-
-#### Tests d'intégration
-- [ ] Flow d'authentification
-- [ ] CRUD des mots de passe
-- [ ] Scénarios de partage
-
-### 8. Documentation
-- [ ] Swagger avec exemples
-- [ ] Documentation des endpoints
-- [ ] Description des DTOs
-- [ ] Documentation des codes
+- Frédéric LAUSSON
