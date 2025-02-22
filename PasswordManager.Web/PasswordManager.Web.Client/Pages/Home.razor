@@ -30,6 +30,11 @@ else
         <div class="row mb-3">
             <div class="col">
                 <h1>My Passwords</h1>
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-primary" @onclick="HandleLogout">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </button>
+                </div>
             </div>
             <div class="col-auto">
                 <button class="btn btn-primary" @onclick="NavigateToNewPassword">
@@ -164,6 +169,13 @@ else
             isLoading = false;
             StateHasChanged();
         }
+    }
+
+    private async Task HandleLogout()
+    {
+        await AuthService.Logout();
+        isAuthenticated = false;
+        NavigationManager.NavigateTo("/login", true);
     }
 
     protected override async Task OnInitializedAsync()

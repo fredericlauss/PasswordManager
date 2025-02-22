@@ -56,7 +56,7 @@ namespace PasswordManager.Web.Client.Services
 
         public async Task Logout()
         {
-            // Nettoyer les données d'authentification si nécessaire
+            await _localStorage.RemoveItemAsync("authToken");
         }
 
         public async Task<string?> GetToken()
