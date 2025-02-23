@@ -27,5 +27,4 @@ Ce projet vise à développer une solution Blazor pour un gestionnaire de mots d
 
 ## Auteurs
 
-- Frédéric LAUSSON
-- M1 - nws
+- Frédéric LAUSSON | M1 - nws
