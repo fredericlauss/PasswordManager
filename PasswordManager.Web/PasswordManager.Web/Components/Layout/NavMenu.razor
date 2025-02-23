@@ -1,4 +1,6 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@rendermode InteractiveServer
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">Password Manager</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -14,13 +16,11 @@
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
             </NavLink>
         </div>
-        
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="login">
                 <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> Login
             </NavLink>
         </div>
-        
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="register">
                 <span class="bi bi-person-plus-fill-nav-menu" aria-hidden="true"></span> Register
@@ -35,6 +35,10 @@
 
     private void ToggleNavMenu()
     {
+        Console.WriteLine($"ToggleNavMenu called. Before: {collapseNavMenu}");
         collapseNavMenu = !collapseNavMenu;
+        Console.WriteLine($"After toggle: {collapseNavMenu}");
+        Console.WriteLine($"NavMenuCssClass: {NavMenuCssClass}");
+        StateHasChanged();
     }
 }
