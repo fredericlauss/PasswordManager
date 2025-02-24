@@ -4,6 +4,25 @@
 
 Ce projet vise à développer une solution Blazor pour un gestionnaire de mots de passe, destiné aux étudiants en enseignement supérieur. Il permettra aux utilisateurs de stocker, gérer et accéder à leurs mots de passe en toute sécurité grâce à une interface conviviale.
 
+## Installation et lancement
+
+1. Cloner le repository
+   ```bash
+   git clone [url-du-repo]
+   ```
+
+2. Ouvrir la solution dans Visual Studio
+   - Double-cliquer sur `PasswordManager.sln`
+   - Ou via Visual Studio : File > Open > Project/Solution
+
+3. Configurer le projet
+   - Clic droit sur la Solution dans l'explorateur de solution
+   - Sélectionner "Set Startup Projects..."
+   - Choisir "Multiple startup projects"
+   - Mettre "Start" pour :
+     - PasswordManager.Api
+     - PasswordManager.Web
+
 ## Fonctionnalités principales
 
 - [x] Authentification (3pts) : Inscription, connexion.
